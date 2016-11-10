@@ -1,0 +1,28 @@
+{
+    "attestation": {
+        "attestorAddress": "0x675b6fcd606bbfd679bcfdd34afecc9610eed66c",
+        "transactionIdentifier": {
+            "networkId" : 2,
+            "contractAddress": "0x131bec75342a54ffea3087bda5ba720394c486a9",
+            "functionId": "0xb9a2de3a",
+            "transactionSignature": "function endAuction(uint auctionId) returns (bool success)"
+        },            
+        "description": "This function checks to make sure the auction is ok to end, and then it ends the auction transferring the asset to the winning bidder if won, or back to the seller if not won. It sets the winning bid amount or losing bid amount to be refunded to the appropriate party. It also sets the distribution cut.",
+        "throws": ["You run out of gas.",
+                   "The contract can't set the owner of the asset to the correct person. This relies on an external contract call outside of your control."],
+        "callsExternal": true,
+        "externalCalls": [
+            {"contractAddress": "undetermined",
+             "signature": "function setOwner(string, address) returns (bool)"}
+        ],
+        "usesGas": true,
+        "acceptsETH": false,
+        "sendsYouETH": false,
+        "updatesAssetOwnership": true,
+        "hasExploits": true,
+        "exploits": [
+            {"severity": "high",
+             "description": "endAuction could be called multiple times if the reserve price has not been hit. In this case, the refund amount of the top bidder would keep being increased." }
+            ]        
+    }
+}

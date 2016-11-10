@@ -1,0 +1,12 @@
+{
+    "contract" : {
+        "address" : "0x131bec75342a54ffea3087bda5ba720394c486a9",
+        "verification": "QmeUFA245LkwSM5pjcRtN6eJSt55zKYb52ygdUS536gi3N",
+        "name" : "AuctionHouse"
+        /* Use conventions to access code, ABI, bytecode
+           "verificationCode": "QmeUFA245LkwSM5pjcRtN6eJSt55zKYb52ygdUS536gi3N/code",
+           "verificationABI": "QmeUFA245LkwSM5pjcRtN6eJSt55zKYb52ygdUS536gi3N/ABI",
+           "verificationByteCode": "QmeUFA245LkwSM5pjcRtN6eJSt55zKYb52ygdUS536gi3N/bytecode"
+        */
+    }
+}
