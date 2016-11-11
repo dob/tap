@@ -1,6 +1,7 @@
 var accounts;
 var account;
 var tap;       // our contract object
+var ipfs;
 
 function setStatus(message) {
     var status = document.getElementById("status");
@@ -78,8 +79,76 @@ function renderContractDetails(contractAddr, methodId) {
         document.getElementById("contractName").innerHTML = name;
         document.getElementById("methodId").innerHTML = method;
 
-        document.getElementById("methodAttestation").innerHTML = "Attestation at <a href='http://127.0.0.1:8082/ipfs/" + hash + "'>" + hash + "</a>";
+        var attestationArea = document.getElementById("methodAttestation");
+
+        attestationArea.innerHTML = "Attestation at <a href='http://127.0.0.1:8082/ipfs/" + hash + "'>" + hash + "</a>";
+
+        var body = '';
+        var ipfsPath = hash;
+        console.log("About to request IPFS files for " + ipfsPath);
+        ipfs.files.get(ipfsPath, function(err, res) {
+            res.on('data', (chunk) => {
+                chunk.content.on('data', (data) => {
+                    var text = data.toString();
+                    body += text;
+                });
+
+                chunk.content.on('end', () => {
+                    var attestation = JSON.parse(body);
+                    var signature = attestation.attestation.transactionIdentifier.transactionSignature;
+                    attestationArea.innerHTML += "<br>For function: " + signature + "<br>" + renderAttestation(attestation);
+                    setStatus("Contract details loaded");
+                });
+            });
+        });
     });
+}
+
+function renderAttestation(attestation) {
+    var att = attestation.attestation;
+
+    var body = '<table id="attestationTable">';
+
+    body += tableRow("Author", att.attestorAddress);
+    body += tableRow("Risk", att.risk);
+    body += tableRow("Description", att.description);
+    body += tableRow("Known Exploits", att.hasExploits);
+    body += tableRow("Accepts ETH", att.acceptsETH);
+    body += tableRow("Sends you ETH", att.sendsYouETH);
+    body += tableRow("Uses Gas", att.usesGas);
+    body += tableRow("Updates Asset Ownership", att.updatesAssetOwnership);
+    body += tableRow("Calls external contracts", att.callsExternal);
+
+    var exploitDescriptions = '';
+    for (var i = 0; i < att.exploits.length; i++) {
+        var exploit = att.exploits[i];
+        exploitDescriptions += exploit.severity + ": " + exploit.description + "<br>";
+    }
+
+    body += tableRow("Exploit descriptions", exploitDescriptions);
+
+    var throwDescriptions = "";
+    for (var i = 0; i < att.throws.length; i++) {
+        throwDescriptions += att.throws[i] + "<br>";
+    }
+
+    body += tableRow("Known throws", throwDescriptions);
+
+    var externalCalls = "";
+    for (var i = 0; i < att.externalCalls.length; i++) {
+        extCall = att.externalCalls[i];
+        externalCalls += "Contract: " + extCall.contractAddress + "<br>Function: " + extCall.signature + "<br><br>";
+    }
+
+    body += tableRow("External calls", externalCalls);
+    
+    body += "</table>";
+    
+    return body;
+}
+
+function tableRow(label, val) {
+    return "<tr><td class='trlabel'>" + label + "</td><td class='trvalue'>" + val + "</td></tr>";
 }
 
 function setupContractPage() {
@@ -92,6 +161,8 @@ function setupContractPage() {
 }
 
 window.onload = function() {
+    ipfs = IpfsApi();
+
     web3.eth.getAccounts(function(err, accs) {
         if (err != null) {
             alert("There was an error fetching your accounts.");
@@ -111,4 +182,5 @@ window.onload = function() {
         setupContractPage();
         
     });
+
 }

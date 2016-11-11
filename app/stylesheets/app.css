@@ -43,6 +43,22 @@ h3 {
   color: black;
 }
 
+div#methodAttestation {
+    width: 800px;
+}
+
 #balance {
   color: black;
 }
+
+#attestationTable {
+    width: 800px;
+    table-layout: fixed;
+}
+
+.trlabel {
+    width: 250px;
+    vertical-align: top;
+    font-weight: bold;
+}
+
