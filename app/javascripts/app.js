@@ -56,6 +56,41 @@ function addAttestation() {
     });
 }
 
+// Utility function to parse URI params
+function getParameterByName(name, url) {
+    if (!url) url = window.location.href;
+    name = name.replace(/[\[\]]/g, "\\$&");
+    var regex = new RegExp("[?&]" + name + "(=([^&#]*)|&|#|$)"),
+        results = regex.exec(url);
+    if (!results) return null;
+    if (!results[2]) return '';
+    return decodeURIComponent(results[2].replace(/\+/g, " "));
+}
+
+function renderContractDetails(contractAddr, methodId) {
+    setStatus("Fetching contract details");
+
+    tap.getAttestation.call(0).then(function(res) {
+        var name = res[1];
+        var method = res[4];
+        var hash = res[3];
+
+        document.getElementById("contractName").innerHTML = name;
+        document.getElementById("methodId").innerHTML = method;
+
+        document.getElementById("methodAttestation").innerHTML = "Attestation at <a href='http://127.0.0.1:8082/ipfs/" + hash + "'>" + hash + "</a>";
+    });
+}
+
+function setupContractPage() {
+    var contractAddr = getParameterByName("contract");
+    var methodId = getParameterByName("method");
+
+    if (contractAddr && methodId) {
+        renderContractDetails(contractAddr, methodId);
+    }
+}
+
 window.onload = function() {
     web3.eth.getAccounts(function(err, accs) {
         if (err != null) {
@@ -72,5 +107,8 @@ window.onload = function() {
         account = accounts[0];
 
         tap = TAP.deployed();
+
+        setupContractPage();
+        
     });
 }
