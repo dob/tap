@@ -5,6 +5,11 @@
 Running a full decentralized version of TAP requires running Ethereum
 and IPFS.
 
+The architecture of the app is that attestations are stored on IPFS,
+and the hashes that represent them are stored into the contract. Users
+can make verify any contracts code (also stored on IPFS), and then
+other users can attest to the contracts.
+
 ### Setup Ethereum
 
 Setup a local node on a local network to test against...
@@ -49,6 +54,8 @@ hashes
     truffle migrate --reset
     truffle serve
 
-You can now access the app at `http://localhost:8080`
+You can now access the app at `http://localhost:8080` were you can
+register contracts and attestations. You can then access attestations
+at `http://localhost:8080/attestations.html?contract=<contractAddress>&method=<methodId>`.
 
 
