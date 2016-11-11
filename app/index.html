@@ -1,22 +1,27 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <title>MetaCoin - Default Truffle App</title>
+  <title>TAP - Transaction Attestation Platform</title>
   <link href='https://fonts.googleapis.com/css?family=Open+Sans:400,700' rel='stylesheet' type='text/css'>
   <link href="./app.css" rel='stylesheet' type='text/css'>
   <script src="./app.js"></script>
 </head>
 <body>
-  <h1>MetaCoin</h1>
-  <h2>Example Truffle Dapp</h2>
-  <h3>You have <span class="black"><span id="balance"></span> META</span></h3>
-
+  <h1>TAP - Transaction Attestation Platform</h1>
+  <h2>Request an Attestation</h2>
+  <br><label for="contractAddress">Contract Address:</label><input type="text" id="contractAddress" placeholder="0x131bec75342a54ffea3087bda5ba720394c486a9"></input>
+  <br><label for="contractIPFSHash">Contract IPFS Hash:</label><input type="text" id="contractIPFSHash" placeholder="QmeUFA245LkwSM5pjcRtN6eJSt55zKYb52ygdUS536gi3N"></input>
+  <br><label for="contractName">Contract Name:</label><input type="text" id="contractName" placeholder="AuctionHouse"></input>
+  <br><br><button id="send" onclick="addContractVerification()">Request Verification</button>
+  
   <br>
-  <h1>Send</h1>
-  <br><label for="amount">Amount:</label><input type="text" id="amount" placeholder="e.g., 95"></input>
-  <br><label for="receiver">To Address:</label><input type="text" id="receiver" placeholder="e.g., 0x93e66d9baea28c17d9fc393b53e3fbdd76899dae"></input>
-  <br><br><button id="send" onclick="sendCoin()">Send MetaCoin</button>
-  <br><br>
+  <h2>Submit an Attestation</h2>
+  <br><label for="attestationContractAddress">Contract Address:</label><input type="text" id="attestationContractAddress" placeholder="0x131bec75342a54ffea3087bda5ba720394c486a9"></input>
+  <br><label for="methodId">Method ID:</label><input type="text" id="methodId" placeholder="0xb9a2de3a"></input>
+  <br><label for="attestationIPFSHash">IPFS Hash:</label><input type="text" id="attestationIPFSHash" placeholder="QmZFojAU8KUispzxPDdZgPGfJLCdEQUr8VMuygUSg2bEkn"></input>
+  <br><br><button id="send" onclick="addAttestation()">Submit Attestation</button>
+
+  <hr />
   <span id="status"></span>
 </body>
 </html>
