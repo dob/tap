@@ -8,12 +8,14 @@ contract TAP {
         bytes4 methodId;
         address attestorAddress;
         string attestationIPFSHash;
+        bool exists;
     }
 
     struct Contract {
         address contractAddress;
         string verificationIPFSHash;
         uint256 bounty;
+        bool exists;
     }
 
     mapping (address => Contract) public contractVerifications;
@@ -24,9 +26,6 @@ contract TAP {
     uint public bountyLimit;
     address owner;
     
-    // Constants
-    address zeroAddress = 0x0000000000000000000000000000000000000000;
-
     modifier onlyOwner() {
         if (msg.sender != owner) {
             throw;
@@ -41,7 +40,7 @@ contract TAP {
 
     function addContractVerification(address _addr, string _ipfsHash) payable returns (bool) {
         // Check to see if there already is a verification for this contract
-        if(contractVerifications[_addr].contractAddress != zeroAddress) {
+        if(contractVerifications[_addr].exists == true) {
             return false;
         }
 
@@ -53,6 +52,7 @@ contract TAP {
         c.contractAddress = _addr;
         c.verificationIPFSHash = _ipfsHash;
         c.bounty = msg.value;
+        c.exists = true;
         contractVerifications[_addr] = c;
         
         return true;
@@ -65,6 +65,7 @@ contract TAP {
         a.methodId = _methodId;
         a.attestorAddress = msg.sender;
         a.attestationIPFSHash = _ipfsHash;
+        a.exists = true;
 
         attestationsForContract[_contractAddress].push(a);
         
@@ -75,7 +76,7 @@ contract TAP {
     function addBounty(address _contractAddress) payable returns (bool) {
         Contract c = contractVerifications[_contractAddress];
 
-        if(c.contractAddress == zeroAddress) {
+        if(c.exists == false) {
             throw;  // Return money to sender, this contract isn't verified.
         }
 
