@@ -23,6 +23,7 @@
         "exploits": [
             {"severity": "high",
              "description": "endAuction could be called multiple times if the reserve price has not been hit. In this case, the refund amount of the top bidder would keep being increased." }
-            ]        
+        ],
+        "risk": "red"
     }
 }

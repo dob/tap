@@ -39,7 +39,7 @@ contract TAP {
         owner = msg.sender;
     }
 
-    function addContractVerification(address _addr, string _ipfsHash) payable returns (bool) {
+    function addContractVerification(address _addr, string _ipfsHash, string _name) payable returns (bool) {
         // Check to see if there already is a verification for this contract
         if(contractVerifications[_addr].exists == true) {
             return false;
@@ -52,6 +52,7 @@ contract TAP {
         Contract c = contractVerifications[_addr];
         c.contractAddress = _addr;
         c.verificationIPFSHash = _ipfsHash;
+        c.name = _name;
         c.bounty = msg.value;
         c.exists = true;
         contractVerifications[_addr] = c;

@@ -9,7 +9,7 @@ contract('TAP', function(accounts) {
         var functionId = 0xb9a2de3a;
         var author = accounts[1];
         
-        return tap.addContractVerification(contractAddress, ipfsHashForContract, {from:owner, value:bounty}).then(function() {
+        return tap.addContractVerification(contractAddress, ipfsHashForContract, "AuctionHouse", {from:owner, value:bounty}).then(function() {
             return tap.contractVerifications.call(contractAddress);
         }).then(function(ctr) {
             assert.equal(ctr[0], contractAddress, "Address didn't match");
@@ -35,7 +35,7 @@ contract('TAP', function(accounts) {
         var ipfsHash = "QmRuHqGQCRJBfzzeSV7HYBikHRRMNfjPuu3L7nzKuiEV7t";
 
         return TAP.new().then(function(tap) {
-            return tap.addContractVerification(contractAddress, ipfsHash).then(function() {
+            return tap.addContractVerification(contractAddress, ipfsHash, "AuctionHouse").then(function() {
                 return tap.addBounty(contractAddress, {value: bounty})
             }).then(function() {
                 return tap.contractVerifications.call(contractAddress);
