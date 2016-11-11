@@ -15,6 +15,7 @@ contract TAP {
         address contractAddress;
         string verificationIPFSHash;
         uint256 bounty;
+        string name;
         bool exists;
     }
 
