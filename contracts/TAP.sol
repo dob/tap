@@ -21,6 +21,7 @@ contract TAP {
 
     mapping (address => Contract) public contractVerifications;
     mapping (address => Attestation[]) public attestationsForContract;
+    mapping (address => uint256[]) public idsForContract;
     
     Attestation[] public attestations;
 
@@ -70,6 +71,7 @@ contract TAP {
         a.exists = true;
 
         attestationsForContract[_contractAddress].push(a);
+        idsForContract[_contractAddress].push(a.id);
         
         return true;
     }
@@ -105,6 +107,10 @@ contract TAP {
                     a.attestationIPFSHash,
                     a.methodId);
         }
+    }
+
+    function getIdsForContract(address _contractAddress) returns (uint256[]) {
+        return idsForContract[_contractAddress];
     }
 
     function changeBountyLimit(uint256 newLimit) onlyOwner returns (bool) {

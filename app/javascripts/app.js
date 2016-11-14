@@ -70,25 +70,32 @@ function getParameterByName(name, url) {
 
 function renderContractDetails(contractAddr, methodId) {
     setStatus("Fetching contract details");
+    var attestationArea = document.getElementById("methodAttestation");
 
-    tap.getAttestation.call(0).then(function(res) {
-        var name = res[1];
-        var method = res[4];
-        var hash = res[3];
+    tap.getIdsForContract.call(contractAddr).then(function(res) {
+        for (var i = 0; i < res.length; i++) {
+            tap.getAttestation.call(i).then(function(res) {
+                var name = res[1];
+                var method = res[4];
+                var hash = res[3];
 
-        document.getElementById("contractName").innerHTML = name;
-        document.getElementById("methodId").innerHTML = method;
+                // Looping through all attestations for this contract
+                // so check if this one is for the correct method.
+                if (method == methodId) {
+                    document.getElementById("contractName").innerHTML = name;
+                    document.getElementById("methodId").innerHTML = method;
 
-        var attestationArea = document.getElementById("methodAttestation");
+                    attestationArea.innerHTML += "<br>Attestation at <a href='http://127.0.0.1:8082/ipfs/" + hash + "'>" + hash + "</a>";
 
-        attestationArea.innerHTML = "Attestation at <a href='http://127.0.0.1:8082/ipfs/" + hash + "'>" + hash + "</a>";
-
-        readIPFSFile(hash, function(err, body) {
-            var attestation = JSON.parse(body);
-            var signature = attestation.attestation.transactionIdentifier.transactionSignature;
-            attestationArea.innerHTML += "<br>For function: " + signature + "<br>" + renderAttestation(attestation);
-            setStatus("Contract details loaded");
-        });
+                    readIPFSFile(hash, function(err, body) {
+                        var attestation = JSON.parse(body);
+                        var signature = attestation.attestation.transactionIdentifier.transactionSignature;
+                        attestationArea.innerHTML += "<br>For function: " + signature + "<br>" + renderAttestation(attestation);
+                        setStatus("Contract details loaded");
+                    });
+                }
+            });
+        }
     });
 }
 
