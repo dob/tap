@@ -83,22 +83,30 @@ function renderContractDetails(contractAddr, methodId) {
 
         attestationArea.innerHTML = "Attestation at <a href='http://127.0.0.1:8082/ipfs/" + hash + "'>" + hash + "</a>";
 
-        var body = '';
-        var ipfsPath = hash;
-        console.log("About to request IPFS files for " + ipfsPath);
-        ipfs.files.get(ipfsPath, function(err, res) {
-            res.on('data', (chunk) => {
-                chunk.content.on('data', (data) => {
-                    var text = data.toString();
-                    body += text;
-                });
+        readIPFSFile(hash, function(err, body) {
+            var attestation = JSON.parse(body);
+            var signature = attestation.attestation.transactionIdentifier.transactionSignature;
+            attestationArea.innerHTML += "<br>For function: " + signature + "<br>" + renderAttestation(attestation);
+            setStatus("Contract details loaded");
+        });
+    });
+}
 
-                chunk.content.on('end', () => {
-                    var attestation = JSON.parse(body);
-                    var signature = attestation.attestation.transactionIdentifier.transactionSignature;
-                    attestationArea.innerHTML += "<br>For function: " + signature + "<br>" + renderAttestation(attestation);
-                    setStatus("Contract details loaded");
-                });
+function readIPFSFile(hash, callback) {
+    var body = '';
+    ipfs.files.get(hash, function(err, res) {
+        if (err) {
+            callback(err, null);
+        }
+
+        res.on('data', (chunk) => {
+            chunk.content.on('data', (data) => {
+                var text = data.toString();
+                body += text;
+            });
+
+            chunk.content.on('end', () => {
+                callback(null, body);
             });
         });
     });
