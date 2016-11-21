@@ -3,12 +3,16 @@ pragma solidity ^0.4.4;
 contract TAP {
 
     struct Attestation {
-        uint256 id;
+        uint id;
         address contractAddress;
         bytes4 methodId;
         address attestorAddress;
         string attestationIPFSHash;
         bool exists;
+
+        // Votes
+        uint voteCount;
+        mapping (address => bool) addressVoted;
     }
 
     struct Contract {
@@ -20,7 +24,7 @@ contract TAP {
 
     mapping (address => Contract) public contractVerifications;
     mapping (address => Attestation[]) public attestationsForContract;
-    mapping (address => uint256[]) public idsForContract;
+    mapping (address => uint[]) public idsForContract;
     
     Attestation[] public attestations;
 
@@ -62,16 +66,34 @@ contract TAP {
         a.attestationIPFSHash = _ipfsHash;
         a.exists = true;
 
+        // Vote count starts at one because you vote for yourself
+        a.voteCount = 1;
+        a.addressVoted[msg.sender] = true;
+
         attestationsForContract[_contractAddress].push(a);
         idsForContract[_contractAddress].push(a.id);
         
         return true;
     }
 
+    function vote(uint _attestationId) returns (bool) {
+        Attestation a = attestations[_attestationId];
+
+        // If user already voted return false
+        if (a.addressVoted[msg.sender] == true) {
+            return false;
+        }
+
+        a.voteCount++;
+        a.addressVoted[msg.sender] = true;
+
+        return true;
+    }
+
     // This return signature is giving major problems. It works in this order, but
     // bytes4 seems to be screwing something up, as anything that comes after it doesn't
     // get returned correctly. It seems to work if that's the last return val.
-    function getAttestation(uint256 id) returns (uint256, address, address, string, bytes4) {
+    function getAttestation(uint id) returns (uint, address, address, string, bytes4) {
         if (id >= attestations.length) {
             return;
         } else  {
@@ -84,7 +106,7 @@ contract TAP {
         }
     }
 
-    function getIdsForContract(address _contractAddress) returns (uint256[]) {
+    function getIdsForContract(address _contractAddress) returns (uint[]) {
         return idsForContract[_contractAddress];
     }
 
