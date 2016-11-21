@@ -13,6 +13,7 @@ contract TAP {
         // Votes
         uint voteCount;
         mapping (address => bool) addressVoted;
+        address[] usersWhoVoted;
     }
 
     struct Contract {
@@ -79,6 +80,7 @@ contract TAP {
         // Vote count starts at one because you vote for yourself
         a.voteCount = 1;
         a.addressVoted[msg.sender] = true;
+        a.usersWhoVoted.push(msg.sender);
 
         attestationsForContract[_contractAddress].push(a);
         idsForContract[_contractAddress].push(a.id);
@@ -97,7 +99,39 @@ contract TAP {
 
         a.voteCount++;
         a.addressVoted[msg.sender] = true;
+        a.usersWhoVoted.push(msg.sender);
 
+        return true;
+    }
+
+    // Warning...this is unsafe if there are a LOT of votes.
+    // The function may run out of gas before resetting the state.
+    // Unfortunately we have to loop through the usersWhoVoted array, which
+    // can run out of gas in a transaction.
+    function unvote(uint _attestationId) returns (bool) {
+        Attestation a = attestations[_attestationId];
+
+        // If a user hasn't voted return false
+        if (a.addressVoted[msg.sender] == false) {
+            return false;
+        }
+
+        a.voteCount--;
+        a.addressVoted[msg.sender] = false;
+
+        int j = -1;
+        for (uint i = 0; i < a.usersWhoVoted.length; i++) {
+            if (j > -1 ) {
+                a.usersWhoVoted[i - 1] = a.usersWhoVoted[i];
+            }
+            
+            if (a.usersWhoVoted[i] == msg.sender) {
+                j = int(i);
+            }
+        }
+
+        delete a.usersWhoVoted[a.usersWhoVoted.length - 1];
+        a.usersWhoVoted.length--;
         return true;
     }
 
