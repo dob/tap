@@ -73,14 +73,16 @@ function renderContractDetails(contractAddr, methodId) {
     var attestationArea = document.getElementById("methodAttestation");
 
     tap.getIdsForContract.call(contractAddr).then(function(res) {
-        for (var i = 0; i < res.length; i++) {
-            tap.getAttestation.call(i).then(function(res) {
+        
+        //for (var i = 0; i < res.length; i++) {
+            tap.getAttestation.call(0).then(function(res) {
                 var name = res[1];
                 var method = res[4];
                 var hash = res[3];
 
                 // Looping through all attestations for this contract
                 // so check if this one is for the correct method.
+                console.log("Method is: " + method + " and methodId is " + methodId);
                 if (method == methodId) {
                     document.getElementById("contractName").innerHTML = name;
                     document.getElementById("methodId").innerHTML = method;
@@ -95,7 +97,7 @@ function renderContractDetails(contractAddr, methodId) {
                     });
                 }
             });
-        }
+    //}
     });
 }
 
