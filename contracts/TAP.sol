@@ -125,6 +125,19 @@ contract TAP {
         return attestationsForUser[_user].length;
     }
 
+    // Right now reputation is just the raw data of how many attestations this user has written and
+    // how many collective votes their attestations have received
+    function getUserReputation(address _user) returns (uint numberOfAttestations, uint numberOfVotes) {
+        Attestation[] userAttestations = attestationsForUser[_user];
+        numberOfAttestations = userAttestations.length;
+
+        for (uint i = 0; i < numberOfAttestations; i++) {
+            numberOfVotes += userAttestations[i].voteCount;
+        }
+        
+        return (numberOfAttestations, numberOfVotes);
+    }
+
     // Do not send ether to this contract blindly
     function () {
         throw;
