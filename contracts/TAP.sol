@@ -14,7 +14,6 @@ contract TAP {
     struct Contract {
         address contractAddress;
         string verificationIPFSHash;
-        uint256 bounty;
         string name;
         bool exists;
     }
@@ -25,7 +24,6 @@ contract TAP {
     
     Attestation[] public attestations;
 
-    uint public bountyLimit;
     address owner;
     
     modifier onlyOwner() {
@@ -36,25 +34,19 @@ contract TAP {
     }
     
     function TAP() {
-        bountyLimit = 100 ether; // 100 ETH
         owner = msg.sender;
     }
 
-    function addContractVerification(address _addr, string _ipfsHash, string _name) payable returns (bool) {
+    function addContractVerification(address _addr, string _ipfsHash, string _name) returns (bool) {
         // Check to see if there already is a verification for this contract
         if(contractVerifications[_addr].exists == true) {
             return false;
-        }
-
-        if(msg.value > bountyLimit) {
-            throw;  // Return the ETH to the sender since they sent more than allowed right now
         }
 
         Contract c = contractVerifications[_addr];
         c.contractAddress = _addr;
         c.verificationIPFSHash = _ipfsHash;
         c.name = _name;
-        c.bounty = msg.value;
         c.exists = true;
         contractVerifications[_addr] = c;
         
@@ -76,23 +68,6 @@ contract TAP {
         return true;
     }
 
-    // Can add a bounty to any contract that's been verified already
-    function addBounty(address _contractAddress) payable returns (bool) {
-        Contract c = contractVerifications[_contractAddress];
-
-        if(c.exists == false) {
-            throw;  // Return money to sender, this contract isn't verified.
-        }
-
-        if (c.bounty + msg.value > bountyLimit) {
-            throw;
-        }
-
-        c.bounty += msg.value;
-        return true;
-    }
-
-
     // This return signature is giving major problems. It works in this order, but
     // bytes4 seems to be screwing something up, as anything that comes after it doesn't
     // get returned correctly. It seems to work if that's the last return val.
@@ -111,15 +86,6 @@ contract TAP {
 
     function getIdsForContract(address _contractAddress) returns (uint256[]) {
         return idsForContract[_contractAddress];
-    }
-
-    function changeBountyLimit(uint256 newLimit) onlyOwner returns (bool) {
-        bountyLimit = newLimit;
-
-        // Any side effects for contracts with bounties already greater than
-        // the limit?
-        
-        return true;
     }
 
     // Do not send ether to this contract blindly
