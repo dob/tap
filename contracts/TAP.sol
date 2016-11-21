@@ -22,11 +22,21 @@ contract TAP {
         bool exists;
     }
 
-    mapping (address => Contract) public contractVerifications;
-    mapping (address => Attestation[]) public attestationsForContract;
-    mapping (address => uint[]) public idsForContract;
-    
+    // All known verified contracts to be attested to
+    mapping (address => Contract) public contractVerifications;   
+
+    // All known attestations
     Attestation[] public attestations;
+
+    // Attestations for a given contract address
+    mapping (address => Attestation[]) public attestationsForContract;
+
+    // Attestations ids for a given contract. Helpful for looping through attestations
+    // from outside of this contract.
+    mapping (address => uint[]) public idsForContract;
+
+    // All known attestations for a given user
+    mapping (address => Attestation[]) public attestationsForUser;
 
     address owner;
     
@@ -72,6 +82,7 @@ contract TAP {
 
         attestationsForContract[_contractAddress].push(a);
         idsForContract[_contractAddress].push(a.id);
+        attestationsForUser[msg.sender].push(a);
         
         return true;
     }
@@ -108,6 +119,10 @@ contract TAP {
 
     function getIdsForContract(address _contractAddress) returns (uint[]) {
         return idsForContract[_contractAddress];
+    }
+
+    function getAttestationCountForUser(address _user) returns (uint) {
+        return attestationsForUser[_user].length;
     }
 
     // Do not send ether to this contract blindly
