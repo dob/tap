@@ -142,7 +142,7 @@ contract TAP {
     // This return signature is giving major problems. It works in this order, but
     // bytes4 seems to be screwing something up, as anything that comes after it doesn't
     // get returned correctly. It seems to work if that's the last return val.
-    function getAttestation(uint id) returns (uint, address, address, string, uint, bytes4) {
+    function getAttestation(uint id) constant returns (uint, address, address, string, uint, bytes4) {
         if (id >= attestations.length) {
             return;
         } else  {
@@ -156,17 +156,17 @@ contract TAP {
         }
     }
 
-    function getIdsForContract(address _contractAddress) returns (uint[]) {
+    function getIdsForContract(address _contractAddress) constant returns (uint[]) {
         return idsForContract[_contractAddress];
     }
 
-    function getAttestationCountForUser(address _user) returns (uint) {
+    function getAttestationCountForUser(address _user) constant returns (uint) {
         return attestationsForUser[_user].length;
     }
 
     // Right now reputation is just the raw data of how many attestations this user has written and
     // how many collective votes their attestations have received
-    function getUserReputation(address _user) returns (uint numberOfAttestations, uint numberOfVotes) {
+    function getUserReputation(address _user) constant returns (uint numberOfAttestations, uint numberOfVotes) {
         Attestation[] userAttestations = attestationsForUser[_user];
         numberOfAttestations = userAttestations.length;
 
@@ -188,7 +188,7 @@ contract TAP {
     }
 
     // Do not send ether to this contract blindly
-    function () {
+    function () payable {
         throw;
     }
 }
