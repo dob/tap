@@ -62,3 +62,20 @@ div#methodAttestation {
     font-weight: bold;
 }
 
+/* Add attestation page */
+.attCB {
+    width:20px;
+}
+
+.attLabel {
+    display: inline;
+}
+
+.attTextarea {
+    width:300px;
+    height:100px;
+}
+
+#exploitDescriptionDiv, #externalCallDescriptionDiv, #throwDescriptionDiv {
+    display:none;
+}

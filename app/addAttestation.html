@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>TAP - Add attestation</title>
+        <link href='https://fonts.googleapis.com/css?family=Open+Sans:400,700' rel='stylesheet' type='text/css'>
+        <link href="./app.css" rel='stylesheet' type='text/css'>
+        <script src="https://unpkg.com/ipfs-api/dist/index.js"></script>
+        <script src="./app.js"></script>
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
+        <script src="./add.js"></script>
+    </head>
+
+    <body>
+        <h1>Add Attestation</h1>
+        <h2><span id="contract_method_details"></span></h2>
+
+        <br>
+        <label for="attDescription">Description:</label><br>
+        <textarea id="attDescription" class="attTextarea"></textarea>
+
+        <br>
+        <input type="checkbox" checked id="usesGas" class="attCB">
+        <label for="usesGas" class="attLabel">Uses gas</label>
+        
+        <br>
+        <input type="checkbox" id="acceptsETH" class="attCB">
+        <label for="acceptsETH" class="attLabel">Accepts ETH</label>
+        
+        <br>
+        <input type="checkbox" id="sendsYouEth" class="attCB">
+        <label for="sendsYouETH" class="attLabel">Sends you ETH</label>
+        
+        <br>
+        <input type="checkbox" id="updatesAssetOwnership" class="attCB">
+        <label for="updatesAssetOwnership" class="attLabel">Updates Asset Ownership</label>
+        
+        <br>
+        <input type="checkbox" id="hasExploits" class="attCB">
+        <label for="hasExploits" class="attLabel">Has exploits</label>
+        
+        <br>
+        <input type="checkbox" id="callsExternal" class="attCB">
+        <label for="callsExternal" class="attLabel">Calls external Contracts</label>
+
+        <br>
+        <input type="checkbox" id="throws" class="attCB">
+        <label for="throws" class="attLabel">Throws</label>
+
+        <input type="hidden" id="contractAddress">
+        <input type="hidden" id="methodId">
+
+        <div id="exploitDescriptionDiv">
+            <label for="exploitDescriptions" class="attLabel">Please describe the known exploits. One per line.</label><br>
+            <textarea id="exploitDescriptions" class="attTextarea"></textarea>
+        </div>
+
+        <div id="externalCallDescriptionDiv">
+            <label for="externalCallDescriptions" class="attLabel">Please describe the known external calls. One per line.</label><br>
+            <textarea id="externalCallDescriptions" class="attTextarea"></textarea>
+        </div>
+
+        <div id="throwDescriptionDiv">
+            <label for="throwDescriptions" class="attLabel">Please describe the known throws. One per line.</label><br>
+            <textarea id="throwDescriptions" class="attTextarea"></textarea>
+        </div>
+
+        <br>
+        <label for="safety" class="attLabel">Overall safety rating:</label><br>
+        <select id="safety">
+            <option value="green" selected>Green - safe to use without worry</option>
+            <option value="yellow">Yellow - use with caution, understand the risks</option>
+            <option value="red">Red - danger, known exploits or risks, avoid using</option>            
+        </select>
+
+        <br>
+        <button id="send" onclick="submitNewAttestation()">Submit Attestation</button>
+        
+    </body>
+
+</html>
