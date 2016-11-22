@@ -82,6 +82,10 @@ contract TAP {
         a.addressVoted[msg.sender] = true;
         a.usersWhoVoted.push(msg.sender);
 
+        // TODO: These indexes apparently don't get their values updated
+        // when the attestations[] value gets updated. Instead they should probably just
+        // be references to the attestation.id/index into attesations[] instead of
+        // references
         attestationsForContract[_contractAddress].push(a);
         idsForContract[_contractAddress].push(a.id);
         attestationsForUser[msg.sender].push(a);
@@ -138,7 +142,7 @@ contract TAP {
     // This return signature is giving major problems. It works in this order, but
     // bytes4 seems to be screwing something up, as anything that comes after it doesn't
     // get returned correctly. It seems to work if that's the last return val.
-    function getAttestation(uint id) returns (uint, address, address, string, bytes4) {
+    function getAttestation(uint id) returns (uint, address, address, string, uint, bytes4) {
         if (id >= attestations.length) {
             return;
         } else  {
@@ -147,6 +151,7 @@ contract TAP {
                     a.contractAddress,
                     a.attestorAddress,
                     a.attestationIPFSHash,
+                    a.voteCount,
                     a.methodId);
         }
     }
@@ -165,10 +170,20 @@ contract TAP {
         Attestation[] userAttestations = attestationsForUser[_user];
         numberOfAttestations = userAttestations.length;
 
-        for (uint i = 0; i < numberOfAttestations; i++) {
+        // Looping through the userAttestations array doesn't work, as it seems
+        // that when an attestation gets updated, the copy stored in this
+        // array is not updated? Maybe the struct is copied on push() instead of
+        // being a reference?
+        //
+        // Instead get the ID, index into attestations, and return votecount
+        /* for (uint i = 0; i < numberOfAttestations; i++) {
             numberOfVotes += userAttestations[i].voteCount;
+            }*/
+
+        for (uint i = 0; i < numberOfAttestations; i++) {
+            numberOfVotes += attestations[userAttestations[i].id].voteCount;
         }
-        
+                
         return (numberOfAttestations, numberOfVotes);
     }
 
