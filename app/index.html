@@ -11,16 +11,19 @@
 <body>
   <h1>TAP - Transaction Attestation Platform</h1>
   <h2>Request an Attestation</h2>
-  <br><label for="contractAddress">Contract Address:</label><input type="text" id="contractAddress" placeholder="0x131bec75342a54ffea3087bda5ba720394c486a9"></input>
-  <br><label for="contractIPFSHash">Contract IPFS Hash:</label><input type="text" id="contractIPFSHash" placeholder="QmeUFA245LkwSM5pjcRtN6eJSt55zKYb52ygdUS536gi3N"></input>
-  <br><label for="contractName">Contract Name:</label><input type="text" id="contractName" placeholder="AuctionHouse"></input>
+  <br><label for="contractAddress">Contract Address:</label><input type="text" id="contractAddress" placeholder="0x131bec75342a54ffea3087bda5ba720394c486a9" value="0x131bec75342a54ffea3087bda5ba720394c486a9"></input>
+  <br><label for="contractIPFSHash">Contract IPFS Hash:</label><input type="text" id="contractIPFSHash" placeholder="QmeUFA245LkwSM5pjcRtN6eJSt55zKYb52ygdUS536gi3N" value="QmeUFA245LkwSM5pjcRtN6eJSt55zKYb52ygdUS536gi3N"></input>
+  <br><label for="contractName">Contract Name:</label><input type="text" id="contractName" placeholder="AuctionHouse" value="AuctionHouse"></input>
   <br><br><button id="send" onclick="addContractVerification()">Request Verification</button>
   
   <br>
   <h2>Submit an Attestation</h2>
-  <br><label for="attestationContractAddress">Contract Address:</label><input type="text" id="attestationContractAddress" placeholder="0x131bec75342a54ffea3087bda5ba720394c486a9"></input>
-  <br><label for="methodId">Method ID:</label><input type="text" id="methodId" placeholder="0xb9a2de3a"></input>
-  <br><label for="attestationIPFSHash">IPFS Hash:</label><input type="text" id="attestationIPFSHash" placeholder="QmZFojAU8KUispzxPDdZgPGfJLCdEQUr8VMuygUSg2bEkn"></input>
+  <br><label for="attestationContractAddress">Contract Address:</label><input type="text" id="attestationContractAddress"
+  placeholder="0x131bec75342a54ffea3087bda5ba720394c486a9" value="0x131bec75342a54ffea3087bda5ba720394c486a9"></input>
+  <br><label for="methodId">Method ID:</label><input type="text" id="methodId" placeholder="0xb9a2de3a" value="0xb9a2de3a"></input>
+  <br><label for="attestationIPFSHash">IPFS Hash:</label><input
+  type="text" id="attestationIPFSHash"
+  placeholder="QmZFojAU8KUispzxPDdZgPGfJLCdEQUr8VMuygUSg2bEkn" value="QmZFojAU8KUispzxPDdZgPGfJLCdEQUr8VMuygUSg2bEkn"></input>
   <br><br><button id="send" onclick="addAttestation()">Submit Attestation</button>
 
   <hr />

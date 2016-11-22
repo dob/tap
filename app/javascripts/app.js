@@ -52,7 +52,7 @@ function addAttestation() {
 
     setStatus("Registering attestation");
     console.log("About to submit attestation for: " + [addr, methodId, hash]);
-    tap.addAttestation(addr, methodId, hash, {from:account, gas:600000}).then(function(txnId){
+    tap.addAttestation(addr, methodId, hash, {from:account, gas:2000000}).then(function(txnId){
         setStatus("Completed contract verification");
     });
 }
@@ -73,16 +73,16 @@ function renderContractDetails(contractAddr, methodId) {
     var attestationArea = document.getElementById("methodAttestation");
 
     tap.getIdsForContract.call(contractAddr).then(function(res) {
-        
-        //for (var i = 0; i < res.length; i++) {
-            tap.getAttestation.call(0).then(function(res) {
+        // Loop through each attestation
+        for (var i = 0; i < res.length; i++) {
+            tap.getAttestation.call(res[i]).then(function(res) {
                 var name = res[1];
-                var method = res[4];
+                var method = res[5];
                 var hash = res[3];
+                var votes = res[4];
 
                 // Looping through all attestations for this contract
                 // so check if this one is for the correct method.
-                console.log("Method is: " + method + " and methodId is " + methodId);
                 if (method == methodId) {
                     document.getElementById("contractName").innerHTML = name;
                     document.getElementById("methodId").innerHTML = method;
@@ -92,12 +92,12 @@ function renderContractDetails(contractAddr, methodId) {
                     readIPFSFile(hash, function(err, body) {
                         var attestation = JSON.parse(body);
                         var signature = attestation.attestation.transactionIdentifier.transactionSignature;
-                        attestationArea.innerHTML += "<br>For function: " + signature + "<br>" + renderAttestation(attestation);
+                        attestationArea.innerHTML += "<br>For function: " + signature + "<br>Votes: " + votes + "<br>" + renderAttestation(attestation);
                         setStatus("Contract details loaded");
                     });
                 }
             });
-    //}
+        }
     });
 }
 
