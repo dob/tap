@@ -41,8 +41,33 @@ function submitNewAttestation() {
     att["hasExploits"] = $("#hasExploits").is(':checked');
     att["exploits"] = document.getElementById("exploitDescriptions").value.split("\n");
     att["risk"] = document.getElementById("safety").value;
-    
+
+    /** 
+     * At this point we want to:
+     *
+     * 1. Sign the sha3 hash of the attestatation string using the 
+     *    private key of the ETH account of the author
+     * 2. Upload to IPFS
+     * 3. Write the transaction into TAP
+     */
+    signAttestation(att, function(err, res) {
+        if (!err) {
+            attestationObj["signature"] = res;
+            console.log("Signed attestation is: " + JSON.stringify(attestationObj));
+        }
+    });
+
     console.log("Attestation is: " + JSON.stringify(attestationObj));
+}
+
+// Sign the sha3 hash of the JSON string of the att object
+function signAttestation(att, callback) {
+    let account = web3.eth.accounts[0];
+    let hashToSign = web3.sha3(JSON.stringify(att));
+    
+    web3.eth.sign(account, hashToSign, function(err, res) {
+        callback(err, res);
+    });
 }
 
 window.onload = function() {
