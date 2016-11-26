@@ -7,7 +7,6 @@ module.exports = {
       "javascripts/app.js"
     ],
       "add.js":"javascripts/add.js",
-
     "app.css": [
       "stylesheets/app.css"
     ],

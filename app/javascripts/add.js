@@ -53,11 +53,22 @@ function submitNewAttestation() {
     signAttestation(att, function(err, res) {
         if (!err) {
             attestationObj["signature"] = res;
-            console.log("Signed attestation is: " + JSON.stringify(attestationObj));
+            let fullAttestationString = JSON.stringify(attestationObj);
+            console.log("Attestation is: " + fullAttestationString);
+
+            writeIPFSFile(fullAttestationString, function(err, ipfsData) {
+                if (err) {
+                    console.log("ERROR writing to IPFS: " + err);
+                } else {
+                    let ipfsHash = ipfsData["hash"];
+                    console.log("Wrote to IPFS at hash: " + hash + " full value is: " + ipfsData);
+                }
+            });            
+            
+        } else {
+            console.log("ERROR signing attestation: " + err);
         }
     });
-
-    console.log("Attestation is: " + JSON.stringify(attestationObj));
 }
 
 // Sign the sha3 hash of the JSON string of the att object
@@ -71,6 +82,7 @@ function signAttestation(att, callback) {
 }
 
 window.onload = function() {
+    ipfs = IpfsApi();
     addCheckBoxListeners();
 
     // Referenced in app.js

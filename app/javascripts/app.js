@@ -121,6 +121,18 @@ function readIPFSFile(hash, callback) {
     });
 }
 
+function writeIPFSFile(data, callback) {
+    // Need to get data into correct format for IPFS.
+    // https://github.com/ipfs/examples/issues/17
+    // It says that it needs to be a Buffer or ReadableStream, which isn't available
+    // unless you're using node or Browserify
+
+    ipfs.add(data, function(err, res) {
+        // keys for res are path, hash, size
+        callback(err, res);
+    });
+}
+
 function renderAttestation(attestation) {
     var att = attestation.attestation;
 
