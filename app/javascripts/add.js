@@ -24,6 +24,25 @@ function verifyContract(contract, method) {
 
 function submitNewAttestation() {
     // Called when someone submits the attestation form.
+    let attestationObj = {"attestation":{}};
+    let att = attestationObj["attestation"];
+
+    att["attestorAddress"] = web3.eth.accounts[0];
+    att["transactionIdentifier"] = {};
+    att["transactionIdentifier"]["functionId"] = $("#methodId").value;
+    att["description"] = $("#attDescription").value;
+    att["throws"] = document.getElementById("throwDescription").value.split("\n");
+    att["callsExternal"] = $("#callsExternal").is(':checked');
+    att["externalCalls"] = document.getElementById("externalCallDescriptions").value.split("\n");
+    att["usesGas"] = $("#usesGas").is(':checked');
+    att["acceptsETH"] = $("#acceptsETH").is(':checked');
+    att["sendsYouETH"] = $("#sendsYouETH").is(':checked');
+    att["updatesAssetOwnership"] = $("#updatesAssetOwnership").is(':checked');
+    att["hasExploits"] = $("#hasExploits").is(':checked');
+    att["exploits"] = document.getElementById("exploitDescriptions").value.split("\n");
+    att["risk"] = document.getElementById("safety").value;
+    
+    console.log("Attestation is: " + JSON.stringify(attestationObj));
 }
 
 window.onload = function() {
