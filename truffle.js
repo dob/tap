@@ -7,7 +7,8 @@ module.exports = {
       "javascripts/app.js"
     ],
       "add.js":"javascripts/add.js",
-    "app.css": [
+      "ipfs.js":"javascripts/ipfs.js",
+      "app.css": [
       "stylesheets/app.css"
     ],
     "images/": "images/"

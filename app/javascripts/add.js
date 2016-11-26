@@ -60,8 +60,8 @@ function submitNewAttestation() {
                 if (err) {
                     console.log("ERROR writing to IPFS: " + err);
                 } else {
-                    let ipfsHash = ipfsData["hash"];
-                    console.log("Wrote to IPFS at hash: " + hash + " full value is: " + ipfsData);
+                    //let ipfsHash = ipfsData["hash"];
+                    console.log("Wrote to IPFS at hash: " + ipfsData + " full value is: " + ipfsData);
                 }
             });            
             
@@ -82,7 +82,8 @@ function signAttestation(att, callback) {
 }
 
 window.onload = function() {
-    ipfs = IpfsApi();
+    //ipfs = IpfsApi();
+    ipfs.setProvider();
     addCheckBoxListeners();
 
     // Referenced in app.js

@@ -74,8 +74,10 @@ function renderContractDetails(contractAddr, methodId) {
 
     tap.getIdsForContract.call(contractAddr).then(function(res) {
         // Loop through each attestation
+        console.log("Length of res is: " + res.length);
         for (var i = 0; i < res.length; i++) {
-            tap.getAttestation.call(res[i]).then(function(res) {
+            tap.getAttestation.call(0).then(function(res) {
+                console.log("Res is: " + res);
                 var name = res[1];
                 var method = res[5];
                 var hash = res[3];
@@ -102,33 +104,20 @@ function renderContractDetails(contractAddr, methodId) {
 }
 
 function readIPFSFile(hash, callback) {
-    var body = '';
-    ipfs.files.get(hash, function(err, res) {
+    // Using the consensys IPFS library. Should look into the
+    // catJSON and addJSON calls.
+    ipfs.cat(hash, function(err, res) {
         if (err) {
             callback(err, null);
+        } else {
+            callback(null, res.toString());
         }
-
-        res.on('data', (chunk) => {
-            chunk.content.on('data', (data) => {
-                var text = data.toString();
-                body += text;
-            });
-
-            chunk.content.on('end', () => {
-                callback(null, body);
-            });
-        });
     });
 }
 
 function writeIPFSFile(data, callback) {
-    // Need to get data into correct format for IPFS.
-    // https://github.com/ipfs/examples/issues/17
-    // It says that it needs to be a Buffer or ReadableStream, which isn't available
-    // unless you're using node or Browserify
-
     ipfs.add(data, function(err, res) {
-        // keys for res are path, hash, size
+        // Res is a hash
         callback(err, res);
     });
 }
@@ -190,7 +179,8 @@ function setupContractPage() {
 }
 
 window.onload = function() {
-    ipfs = IpfsApi();
+    //ipfs = IpfsApi();
+    ipfs.setProvider();
 
     web3.eth.getAccounts(function(err, accs) {
         if (err != null) {
