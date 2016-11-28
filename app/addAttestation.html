@@ -51,7 +51,13 @@
         <input type="hidden" id="methodId">
 
         <div id="exploitDescriptionDiv">
-            <label for="exploitDescriptions" class="attLabel">Please describe the known exploits. One per line.</label><br>
+          <label for="exploitSeverity" class="attLabel">Severity of exploits</label><br>
+          <select id="exploitSeverity">
+            <option value="low" selected>Low</option>
+            <option value="medium">Medium</option>
+            <option value="high">High</option>
+          </select><br>
+            <label for="exploitDescriptions" class="attLabel">Please describe the known exploits.</label><br>
             <textarea id="exploitDescriptions" class="attTextarea"></textarea>
         </div>
 

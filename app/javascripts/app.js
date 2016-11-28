@@ -155,8 +155,8 @@ function renderAttestation(attestation) {
     var exploitDescriptions = '';
     for (var i = 0; i < att.exploits.length; i++) {
         var exploit = att.exploits[i];
-        exploitDescriptions += exploit + "<br>";
-        //exploitDescriptions += exploit.severity + ": " + exploit.description + "<br>";
+        //exploitDescriptions += exploit + "<br>";
+        exploitDescriptions += exploit.severity + ": " + exploit.description + "<br>";
     }
 
     body += tableRow("Exploit descriptions", exploitDescriptions);

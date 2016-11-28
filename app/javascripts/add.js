@@ -59,7 +59,16 @@ function submitNewAttestation() {
     att["updatesAssetOwnership"] = $("#updatesAssetOwnership").is(':checked');
     att["hasExploits"] = $("#hasExploits").is(':checked');
     att["risk"] = $("#safety").val();
-    att["exploits"] = textAreaToArray("exploitDescriptions");
+
+    let exploitSeverity = $("#exploitSeverity").val();
+    let exploitDescriptions = document.getElementById("exploitDescriptions").value;
+
+    if (exploitDescriptions === "") {
+        att["exploits"] = [];
+    } else {
+        att["exploits"] = [{"severity" : exploitSeverity, "description" : exploitDescriptions}];
+    }
+    
     att["throws"] = textAreaToArray("throwDescription");
     att["externalCalls"] = textAreaToArray("externalCallDescriptions");
     
