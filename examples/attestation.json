@@ -1,29 +1,28 @@
 {
-    "attestation": {
-        "attestorAddress": "0x675b6fcd606bbfd679bcfdd34afecc9610eed66c",
-        "transactionIdentifier": {
-            "networkId" : 2,
-            "contractAddress": "0x131bec75342a54ffea3087bda5ba720394c486a9",
-            "functionId": "0xb9a2de3a",
-            "transactionSignature": "function endAuction(uint auctionId) returns (bool success)"
-        },            
-        "description": "This function checks to make sure the auction is ok to end, and then it ends the auction transferring the asset to the winning bidder if won, or back to the seller if not won. It sets the winning bid amount or losing bid amount to be refunded to the appropriate party. It also sets the distribution cut.",
-        "throws": ["You run out of gas.",
-                   "The contract can't set the owner of the asset to the correct person. This relies on an external contract call outside of your control."],
-        "callsExternal": true,
-        "externalCalls": [
-            {"contractAddress": "undetermined",
-             "signature": "function setOwner(string, address) returns (bool)"}
+    "attestation":{
+        "attestorAddress":"0x49740a68a9c42a0348042a3668c589c82136de82",
+        "transactionIdentifier":{
+            "functionId":"0xb9a2de3a",
+            "contractAddress":"0x131bec75342a54ffea3087bda5ba720394c486a9",
+            "networkId":"1999",
+            "transactionSignature":"function placeholder(uint)"
+        },
+        "description":"The endAuction() ends the auction. If transfers ownership of the asset to the winning bidder if the reserve was hit, and back to the seller if it was not. It updates the withdrawl balances accordingly so people can withdraw the funds they're entitled to.",
+        "callsExternal":true,
+        "usesGas":true,
+        "acceptsETH":false,
+        "sendsYouETH":false,
+        "updatesAssetOwnership":true,
+        "hasExploits":true,
+        "risk":"yellow",
+        "exploits":[
+            {
+                "severity":"high",
+                "description":"The function can be called with a full call stack multiple times, updating the withdrawl balance of the seller to be more than what they're entitled to."
+            }
         ],
-        "usesGas": true,
-        "acceptsETH": false,
-        "sendsYouETH": false,
-        "updatesAssetOwnership": true,
-        "hasExploits": true,
-        "exploits": [
-            {"severity": "high",
-             "description": "endAuction could be called multiple times if the reserve price has not been hit. In this case, the refund amount of the top bidder would keep being increased." }
-        ],
-        "risk": "red"
-    }
+        "throws":["The auction isn't done.","The transfer of the asset to the new owner fails."],
+        "externalCalls":["This will call setOwner() on the Asset contract which is specified in the auction. This can't be determined ahead of time, so it's up to you as the buyer to reference the sold item and verify the implementation of SetOwner in the item's asset implementation."]
+    },
+    "signature":"0x5c50a4c1804bf4b96209691f244312705f67a5d6d8a9376892fa75bd822295c76204507cf8fe09365c1c60496a1d38654e76e9771ed74da7cea37ec85d1071b21b"
 }
