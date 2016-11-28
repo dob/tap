@@ -75,8 +75,8 @@ function renderContractDetails(contractAddr, methodId) {
     tap.getIdsForContract.call(contractAddr).then(function(res) {
         // Loop through each attestation
         console.log("Length of res is: " + res.length);
-        for (var i = 0; i < res.length; i++) {
-            tap.getAttestation.call(0).then(function(res) {
+        for (let i = 0; i < res.length; i++) {
+            tap.getAttestation.call(i).then(function(res) {
                 console.log("Res is: " + res);
                 var name = res[1];
                 var method = res[5];
