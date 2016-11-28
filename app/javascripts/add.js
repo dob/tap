@@ -1,6 +1,9 @@
 var networkId;
 var method;
 var contract;
+var tap;
+var accounts;
+var account;
 
 function addCheckBoxListeners() {
     $("#hasExploits").click(function() {
@@ -79,6 +82,10 @@ function submitNewAttestation() {
                     console.log("ERROR writing to IPFS: " + err);
                 } else {
                     console.log("Wrote to IPFS at hash: " + ipfsData + " full value is: " + ipfsData);
+                    console.log("Now creating on chain attestation.");
+                    tap.addAttestation(contract, method, ipfsData, {from:account, gas:2000000}).then(function(txId) {
+                        console.log("Finished creating on chain attestation");
+                    });
                 }
             });            
             
@@ -116,6 +123,24 @@ window.onload = function() {
     method = getParameterByName("method");
 
     verifyContract(contract, method);
+
+    web3.eth.getAccounts(function(err, accs) {
+        if (err != null) {
+            alert("There was an error fetching your accounts.");
+            return;
+        }
+
+        if (accs.length == 0) {
+            alert("Couldn't get any accounts! Make sure your Ethereum client is configured correctly.");
+            return;
+        }
+
+        accounts = accs;
+        account = accounts[0];
+
+        tap = TAP.deployed();
+
+    });
 
     getNetwork();
 }

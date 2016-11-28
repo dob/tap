@@ -155,7 +155,8 @@ function renderAttestation(attestation) {
     var exploitDescriptions = '';
     for (var i = 0; i < att.exploits.length; i++) {
         var exploit = att.exploits[i];
-        exploitDescriptions += exploit.severity + ": " + exploit.description + "<br>";
+        exploitDescriptions += exploit + "<br>";
+        //exploitDescriptions += exploit.severity + ": " + exploit.description + "<br>";
     }
 
     body += tableRow("Exploit descriptions", exploitDescriptions);
@@ -170,7 +171,8 @@ function renderAttestation(attestation) {
     var externalCalls = "";
     for (var i = 0; i < att.externalCalls.length; i++) {
         extCall = att.externalCalls[i];
-        externalCalls += "Contract: " + extCall.contractAddress + "<br>Function: " + extCall.signature + "<br><br>";
+        externalCalls += extCall + "<br>";
+        //externalCalls += "Contract: " + extCall.contractAddress + "<br>Function: " + extCall.signature + "<br><br>";
     }
 
     body += tableRow("External calls", externalCalls);
