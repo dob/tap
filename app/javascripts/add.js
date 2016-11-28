@@ -1,3 +1,7 @@
+var networkId;
+var method;
+var contract;
+
 function addCheckBoxListeners() {
     $("#hasExploits").click(function() {
         $("#exploitDescriptionDiv").toggle(this.checked);
@@ -13,13 +17,22 @@ function addCheckBoxListeners() {
 }
 
 function verifyContract(contract, method) {
-    $("#contractAddress").value = contract;
-    $("#methodId").value = method;
+    $("#contractAddress").val(contract);
+    $("#methodId").val(method);
 
     var idText = "Contract: " + contract + "<br>Method: " + method;
     $("#contract_method_details").html(idText);
 
     // TODO actually make sure that we know about this contract within TAP. If not display an error.
+}
+
+function textAreaToArray(elementId) {
+    let val = document.getElementById(elementId).value;
+    if (val === "") {
+        return [];
+    } else {
+        return val.split("\n");
+    }
 }
 
 function submitNewAttestation() {
@@ -28,20 +41,25 @@ function submitNewAttestation() {
     let att = attestationObj["attestation"];
 
     att["attestorAddress"] = web3.eth.accounts[0];
+
     att["transactionIdentifier"] = {};
-    att["transactionIdentifier"]["functionId"] = $("#methodId").value;
-    att["description"] = $("#attDescription").value;
-    att["throws"] = document.getElementById("throwDescription").value.split("\n");
+    att["transactionIdentifier"]["functionId"] = $("#methodId").val();
+    att["transactionIdentifier"]["contractAddress"] = $("#contractAddress").val();
+    att["transactionIdentifier"]["networkId"] = networkId;
+    att["transactionIdentifier"]["transactionSignature"] = getTransactionSignatureFromId(contract, method);
+
+    att["description"] = $("#attDescription").val();
     att["callsExternal"] = $("#callsExternal").is(':checked');
-    att["externalCalls"] = document.getElementById("externalCallDescriptions").value.split("\n");
     att["usesGas"] = $("#usesGas").is(':checked');
     att["acceptsETH"] = $("#acceptsETH").is(':checked');
     att["sendsYouETH"] = $("#sendsYouETH").is(':checked');
     att["updatesAssetOwnership"] = $("#updatesAssetOwnership").is(':checked');
     att["hasExploits"] = $("#hasExploits").is(':checked');
-    att["exploits"] = document.getElementById("exploitDescriptions").value.split("\n");
-    att["risk"] = document.getElementById("safety").value;
-
+    att["risk"] = $("#safety").val();
+    att["exploits"] = textAreaToArray("exploitDescriptions");
+    att["throws"] = textAreaToArray("throwDescription");
+    att["externalCalls"] = textAreaToArray("externalCallDescriptions");
+    
     /** 
      * At this point we want to:
      *
@@ -56,11 +74,10 @@ function submitNewAttestation() {
             let fullAttestationString = JSON.stringify(attestationObj);
             console.log("Attestation is: " + fullAttestationString);
 
-            writeIPFSFile(fullAttestationString, function(err, ipfsData) {
+            writeIPFSJSON(attestationObj, function(err, ipfsData) {
                 if (err) {
                     console.log("ERROR writing to IPFS: " + err);
                 } else {
-                    //let ipfsHash = ipfsData["hash"];
                     console.log("Wrote to IPFS at hash: " + ipfsData + " full value is: " + ipfsData);
                 }
             });            
@@ -81,14 +98,24 @@ function signAttestation(att, callback) {
     });
 }
 
+function getNetwork() {
+    web3.version.getNetwork(function (err, res) {
+        if (!err) {
+            networkId = res;
+        }
+    });
+}
+
 window.onload = function() {
     //ipfs = IpfsApi();
     ipfs.setProvider();
     addCheckBoxListeners();
 
     // Referenced in app.js
-    var contract = getParameterByName("contract");
-    var method = getParameterByName("method");
+    contract = getParameterByName("contract");
+    method = getParameterByName("method");
 
     verifyContract(contract, method);
+
+    getNetwork();
 }

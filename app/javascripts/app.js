@@ -103,6 +103,13 @@ function renderContractDetails(contractAddr, methodId) {
     });
 }
 
+function getTransactionSignatureFromId(contract, method) {
+    // TODO implement a lookup in a registry or in our known registrations
+    // For now return a constant value
+
+    return "function placeholder(uint)";
+}
+
 function readIPFSFile(hash, callback) {
     // Using the consensys IPFS library. Should look into the
     // catJSON and addJSON calls.
@@ -115,9 +122,17 @@ function readIPFSFile(hash, callback) {
     });
 }
 
+// Takes string input 'data' and writes it to IPFS
 function writeIPFSFile(data, callback) {
     ipfs.add(data, function(err, res) {
         // Res is a hash
+        callback(err, res);
+    });
+}
+
+// Takes a javascript object 'data', serializes it to JSON, and writes it to IPFS
+function writeIPFSJSON(data, callback) {
+    ipfs.addJson(data, function(err, res) {
         callback(err, res);
     });
 }
