@@ -1,7 +1,4 @@
 var TAPJS = (function() {
-
-    var tap;       // our contract object
-    var ipfs;
     var networkId;
 
     /**
@@ -19,10 +16,9 @@ var TAPJS = (function() {
                 error("Cannot get code at address: " + addr);
             }
 
-            console.log($("#contractBytecode").html);
-            compileAndVerifyContract(data, contractCode, solcVersoin, function(err, res) {
+            compileAndVerifyContract(data, contractCode, solcVersion, function(err, res) {
                 if (err) {
-                    callback("Could not verify contract");
+                    callback("Could not verify contract: " + err);
                 } else {
                     let hash = res;
                     let account = web3.eth.accounts[0];
@@ -74,6 +70,7 @@ var TAPJS = (function() {
 
     /**
      * Add a new attestation for a given contract and method. It's best to use a convenience method that forms the schema correctly.
+     * @param contract address of the contract on the blockchain
      * @param att Is a well formated attestation object according to the following schema (signature will be appended by the function):
      {
      "attestation":{
@@ -102,11 +99,13 @@ var TAPJS = (function() {
      "externalCalls":["This will call setOwner() on the Asset contract which is specified in the auction. This can't be determined ahead of time, so it's up to you as the buyer to reference the sold item and verify the implementation of SetOwner in the item's asset implementation."]
      }
      }
-     *
+     *@param callback function(err) where err is null if there is no error
      */
-    var submitNewAttestationFunc = function(att) {
+    var submitNewAttestationFunc = function(att, callback) {
         // Called when someone submits the attestation form.
         let attestationObj = {"attestation": att};
+        let contract = att["transactionIdentifier"]["contractAddress"];
+        let method = att["transactionIdentifier"]["functionId"];
         
         /** 
          * At this point we want to:
@@ -124,18 +123,21 @@ var TAPJS = (function() {
 
                 writeIPFSJSON(attestationObj, function(err, ipfsData) {
                     if (err) {
-                        console.log("ERROR writing to IPFS: " + err);
+                        callback("ERROR writing to IPFS: " + err);
+                        
                     } else {
                         console.log("Wrote to IPFS at hash: " + ipfsData + " full value is: " + ipfsData);
                         console.log("Now creating on chain attestation.");
+                        let account = web3.eth.accounts[0];
                         tap.addAttestation(contract, method, ipfsData, {from:account, gas:2000000}).then(function(txId) {
                             console.log("Finished creating on chain attestation");
+                            callback(null);
                         });
                     }
                 });            
                 
             } else {
-                console.log("ERROR signing attestation: " + err);
+                callback("ERROR signing attestation: " + err);
             }
         });
     }
@@ -216,7 +218,7 @@ var TAPJS = (function() {
                            } else {
                                
                                // TODO, write the data to IPFS now that it's verified, and return the hash.
-                               let hash = ""; // Replace this with hash returned from IPFS
+                               let hash = res; // Replace this with hash returned from IPFS
                                callback(null, hash);
                            }
                        });
@@ -241,10 +243,11 @@ var TAPJS = (function() {
         }
 
         if (verified == false) {
-            error("Contract bytecode mismatch. Cannot verify contract at Address: ");
+            callback("Contract bytecode mismatch. Cannot verify contract.", null);
         } else {
-            alert("Found a match!  Verification success!");
             // TODO, write the data to IPFS
+            let hash = "BAD_IPFS_HASH";
+            callback(null, hash);
         }
     }
 
@@ -291,13 +294,16 @@ var TAPJS = (function() {
         return decodeURIComponent(results[2].replace(/\+/g, " "));
     }
 
-    // Instantiate ipfs, web3, and TAP and then return the prototype.
-    ipfs.setProvider();
-    tap = TAP.deployed();
 
     return {
         verifyContract: verifyContractFunc,
         getAttestations: getAttestationsFunc,
-        addAttestation: addAttestationFunc
+        submitNewAttestation: submitNewAttestationFunc
     }
 })();
+
+// Instantiate ipfs, web3, and TAP and then return the prototype.
+window.onload = function() {
+    ipfs.setProvider();
+    tap = TAP.deployed();
+}

@@ -5,6 +5,7 @@ module.exports = {
     ],
       "tap.js":"javascripts/tap.js",
       "ipfs.js":"javascripts/ipfs.js",
+      "index.html":"index.html",
     "images/": "images/"
   },
   rpc: {
