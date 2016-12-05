@@ -138,6 +138,10 @@ hashes
 
 ### Serve the DApp locally
 
+We removed the proof of concept frontend from master, but it still
+lives on the `ui` branch. If you'd like to run the UI:
+
+    git checkout ui
     truffle build
     truffle migrate --reset
     truffle serve

@@ -29,15 +29,12 @@ contract TAP {
     // All known attestations
     Attestation[] public attestations;
 
-    // Attestations for a given contract address
-    mapping (address => Attestation[]) public attestationsForContract;
-
     // Attestations ids for a given contract. Helpful for looping through attestations
     // from outside of this contract.
     mapping (address => uint[]) public idsForContract;
 
-    // All known attestations for a given user
-    mapping (address => Attestation[]) public attestationsForUser;
+    // All known attestation ids for a given user
+    mapping (address => uint[]) public attestationsForUser;
 
     address owner;
     
@@ -82,13 +79,9 @@ contract TAP {
         a.addressVoted[msg.sender] = true;
         a.usersWhoVoted.push(msg.sender);
 
-        // TODO: These indexes apparently don't get their values updated
-        // when the attestations[] value gets updated. Instead they should probably just
-        // be references to the attestation.id/index into attesations[] instead of
-        // references
-        attestationsForContract[_contractAddress].push(a);
+        // Update the indexes to allow quick lookup
         idsForContract[_contractAddress].push(a.id);
-        attestationsForUser[msg.sender].push(a);
+        attestationsForUser[msg.sender].push(a.id);
         
         return true;
     }
@@ -167,21 +160,11 @@ contract TAP {
     // Right now reputation is just the raw data of how many attestations this user has written and
     // how many collective votes their attestations have received
     function getUserReputation(address _user) constant returns (uint numberOfAttestations, uint numberOfVotes) {
-        Attestation[] userAttestations = attestationsForUser[_user];
+        uint[] userAttestations = attestationsForUser[_user];
         numberOfAttestations = userAttestations.length;
 
-        // Looping through the userAttestations array doesn't work, as it seems
-        // that when an attestation gets updated, the copy stored in this
-        // array is not updated? Maybe the struct is copied on push() instead of
-        // being a reference?
-        //
-        // Instead get the ID, index into attestations, and return votecount
-        /* for (uint i = 0; i < numberOfAttestations; i++) {
-            numberOfVotes += userAttestations[i].voteCount;
-            }*/
-
         for (uint i = 0; i < numberOfAttestations; i++) {
-            numberOfVotes += attestations[userAttestations[i].id].voteCount;
+            numberOfVotes += attestations[userAttestations[i]].voteCount;
         }
                 
         return (numberOfAttestations, numberOfVotes);
