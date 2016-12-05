@@ -47,7 +47,8 @@ provides the following functions.
 
 Before you can provide attestations, the code for the contract must be
 verified, and the request registered with TAP. Call `verifyContract`
-if it hasn't been called yet for the contract within TAP.
+if it hasn't been called yet for the contract within TAP. This will
+write out the bytecode, ABI, and code to IPFS (TBD).
 
 `TAPJS.getAttestations(contractAddr, methodId)`
 
