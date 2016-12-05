@@ -5,7 +5,8 @@ var TAPJS = (function() {
      * Verify the contract at a given address with the code provided and write the result to TAP. This will enable people to submit attestations for this contract.
      * @param addr The contract address on the blockchain
      * @param contractCode The contract code as a string
-     * @param solcVersion The version of solidity compiler solc used to compile the code on the blockchain
+     * @param solcVersion The version of solidity compiler solc used to compile the code on the blockchain. EX: soljson-v0.4.6+commit.2dabbdf0.js
+     * @param optimize Optimization level to use in the compilation. Put 1
      * @param name The user friendly name you'd like to give the contract
      * @param callback function(err) that returns an error string if the contract failed to verify, and null if it verifies correctly.
      */

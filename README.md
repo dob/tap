@@ -30,25 +30,26 @@ valid attesattions.
 
 ## JS Interface
 
-To use TAPJS library please include both ipfs.js and tap.js in your
+To use TAPJS library please include both ipfs.js, tap.js, and browser-solc.min.js in your
 source.
 
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
-    <script src="./ipfs.js"></script>
+    <script src="./ipfs.js"></script>   <!-- Borrowed from the Consensys IPFS wrapper: https://github.com/ConsenSys/ipfs.js -->
     <script src="./app.js"></script>
     <script src="./tap.js"></script>
-
-
+    <script src="./browser-solc.min.js"></script>
+    
 [TAP.js](https://github.com/dob/tap/tree/master/app/javascripts)
 provides the core interface for interacting with the TAP platform. It
 provides the following functions.
 
-`TAPJS.verifyContract(addr, contractCode, solcVersion, name, callback)`
+`TAPJS.verifyContract(addr, contractCode, solcVersion, optimize, name, callback)`
 
 Before you can provide attestations, the code for the contract must be
 verified, and the request registered with TAP. Call `verifyContract`
-if it hasn't been called yet for the contract within TAP. This will
-write out the bytecode, ABI, and code to IPFS (TBD).
+if it hasn't been called yet for the contract within TAP. For
+solcVersion, use the string of the version number of the compiler,
+such as `"soljson-v0.4.6+commit.2dabbdf0.js"`, and for optimize, just
+choose `1`.
 
 `TAPJS.getAttestations(contractAddr, methodId)`
 
