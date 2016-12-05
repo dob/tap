@@ -9,14 +9,14 @@ var TAPJS = (function() {
      * @param name The user friendly name you'd like to give the contract
      * @param callback function(err) that returns an error string if the contract failed to verify, and null if it verifies correctly.
      */
-    var verifyContractFunc = function(addr, contractCode, solcVersion, name, callback) {
+    var verifyContractFunc = function(addr, contractCode, solcVersion, optimize, name, callback) {
         console.log("Get ByteCode At: " + addr);
         web3.eth.getCode(addr, function(err, data) {
             if (err) {
                 error("Cannot get code at address: " + addr);
             }
 
-            compileAndVerifyContract(data, contractCode, solcVersion, function(err, res) {
+            compileAndVerifyContract(data, contractCode, solcVersion, optimize, function(err, res) {
                 if (err) {
                     callback("Could not verify contract: " + err);
                 } else {
@@ -194,61 +194,57 @@ var TAPJS = (function() {
      * @param solcVersion The solc Version number
      * @param callback function(err, hash) where hash is the IPFS root of the contract metadata with subfiles /code, /abi, /metadata.json, /bytecode
      */
-    function compileAndVerifyContract(byteCode, contractCode, solcVersion, callback) {
+    function compileAndVerifyContract(bytecode, contractCode, solcVersion, optimize, callback) {
+        BrowserSolc.loadVersion(solcVersion, function(compiler) {
+            result = compiler.compile(contractCode, optimize);
+            console.log("Compile result: " + JSON.stringify(result));
+            contracts = Object.keys(result["contracts"]);
 
-        $.post("http://strato-dev2.blockapps.net/eth/v1.0/solc", { src: contractCode},
-               function( data ) {
+            var counter;
+            var compiledContracts = [];
+            for(counter = 0; counter < contracts.length; counter++) {
+                name = contracts[counter];
+                console.log(name);
+                compilerOutput = result["contracts"][name];
+                compiledContracts.push(
+                    {'bytecode':compilerOutput['bytecode'], 
+                    'runtimeBytecode':compilerOutput['runtimeBytecode'],
+                    'abi':compilerOutput['interface'], 
+                    'sourceCode': contractCode,
+                    'metadata': {"name":name, 'functionHashes':compilerOutput['functionHashes']}
+                });
+            }
 
-                   var jsonData = JSON.parse(data);
-                   if (jsonData["error"] != null) {
-                       error(jsonData["error"]);
-                   } else {
-                       var content = "";
-                       var counter;
-                       for(counter = 0; counter < jsonData["abis"].length; counter++) {
-                           abi = jsonData["abis"][counter];
-                           contract = jsonData["contracts"][counter];
-                       }
+            verifyCode(compiledContracts, bytecode, function(err, res) {
+                if (err) {
+                    callback("Could not verify contract", null);
+                } else {
+                    console.log("IPFS hash: " + res);
+                    let hash = res;
+                    callback(null, hash);
+                }
+            });
 
-                       compiledContracts = jsonData["contracts"];
-
-                       verifyCode(compiledContracts, byteCode, function(err, res) {
-                           if (err) {
-                               callback("Could not verify contract", null);
-                           } else {
-                               
-                               // TODO, write the data to IPFS now that it's verified, and return the hash.
-                               let hash = res; // Replace this with hash returned from IPFS
-                               callback(null, hash);
-                           }
-                       });
-                   }
-               }
-              );
+        });
     }
 
-    function verifyCode(compiledContracts, byteCode, callback) {
+    function verifyCode(compiledContracts, bytecode, callback) {
         console.log("Verify code: " + JSON.stringify(compiledContracts));
-        verified = false;
         for (idx in compiledContracts) {
-            contractCode = compiledContracts[idx]["bin"];
-            // console.log("Contract: " + contract);
-            console.log("Chain code: " + byteCode);
-            console.log("Contract code: " + contractCode);
+            compiledRuntimeCode = "0x" + compiledContracts[idx]["runtimeBytecode"];
+            console.log("Chain code: " + bytecode);
+            console.log("Contract code: " + compiledRuntimeCode);
             console.log("\n\n");
-            if (byteCode == contractCode) {
-                verified = true;
-                break;
+            if (bytecode == compiledRuntimeCode) {
+                console.log("Writting to IPFS: " + JSON.stringify(compiledContracts[idx]));
+                ipfs.addJson(compiledContracts[idx], function(err, hash) {
+                    callback(null, hash);
+                });
+                return;
             }
         }
 
-        if (verified == false) {
-            callback("Contract bytecode mismatch. Cannot verify contract.", null);
-        } else {
-            // TODO, write the data to IPFS
-            let hash = "BAD_IPFS_HASH";
-            callback(null, hash);
-        }
+        callback("Contract bytecode mismatch. Cannot verify contract.", null);
     }
 
 
