@@ -302,8 +302,39 @@ var TAPJS = (function() {
     }
 })();
 
-// Instantiate ipfs, web3, and TAP and then return the prototype.
-window.onload = function() {
-    ipfs.setProvider();
-    tap = TAP.deployed();
-}
+var domIsReady = (function(domIsReady) {
+   var isBrowserIeOrNot = function() {
+      return (!document.attachEvent || typeof document.attachEvent === "undefined" ? 'not-ie' : 'ie');
+   }
+
+   domIsReady = function(callback) {
+      if(callback && typeof callback === 'function'){
+         if(isBrowserIeOrNot() !== 'ie') {
+            document.addEventListener("DOMContentLoaded", function() {
+               return callback();
+            });
+         } else {
+            document.attachEvent("onreadystatechange", function() {
+               if(document.readyState === "complete") {
+                  return callback();
+               }
+            });
+         }
+      } else {
+         console.error('The callback is not a function!');
+      }
+   }
+
+   return domIsReady;
+})(domIsReady || {});
+
+(function(document, window, domIsReady, undefined) {
+   domIsReady(function() {
+       window.tap = TAP.deployed();
+
+       if(typeof ipfs === "undefined") {
+           console.log("You must include ipfs.js");
+       }
+       ipfs.setProvider();
+   });
+})(document, window, domIsReady);

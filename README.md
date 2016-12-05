@@ -30,23 +30,32 @@ valid attesattions.
 
 ## JS Interface
 
+To use TAPJS library please include both ipfs.js and tap.js in your
+source.
+
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
+    <script src="./ipfs.js"></script>
+    <script src="./app.js"></script>
+    <script src="./tap.js"></script>
+
+
 [TAP.js](https://github.com/dob/tap/tree/master/app/javascripts)
 provides the core interface for interacting with the TAP platform. It
 provides the following functions.
 
-`TAP.verifyContract(addr, contractCode, solcVersion, name, callback)`
+`TAPJS.verifyContract(addr, contractCode, solcVersion, name, callback)`
 
 Before you can provide attestations, the code for the contract must be
 verified, and the request registered with TAP. Call `verifyContract`
 if it hasn't been called yet for the contract within TAP.
 
-`TAP.getAttestations(contractAddr, methodId)`
+`TAPJS.getAttestations(contractAddr, methodId)`
 
 Get the known attestations for a given contract and methodId. MethoID
 is the 0x prefixed 4 byte identifier constructed from sha3(function
 signature).
 
-`TAP.submitNewAttestation(att)`
+`TAPJS.submitNewAttestation(att)`
 
 Add a new attestation. This will require you to sign the attestation
 object, and then sign the transaction on the blockchain. At the
@@ -55,7 +64,7 @@ moment, the attestation object is a JS object conforming to the
 but we'd like to add a helper method to make it easier to construct
 this object.
 
-`TAP.vote(attestationId)`
+`TAPJS.vote(attestationId)`
 
 Coming soon...this is how you would vote on an attestation.
 
