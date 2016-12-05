@@ -40,13 +40,13 @@ Before you can provide attestations, the code for the contract must be
 verified, and the request registered with TAP. Call `verifyContract`
 if it hasn't been called yet for the contract within TAP.
 
-`getAttestations(contractAddr, methodId)`
+`TAP.getAttestations(contractAddr, methodId)`
 
 Get the known attestations for a given contract and methodId. MethoID
 is the 0x prefixed 4 byte identifier constructed from sha3(function
 signature).
 
-`submitNewAttestation(att)`
+`TAP.submitNewAttestation(att)`
 
 Add a new attestation. This will require you to sign the attestation
 object, and then sign the transaction on the blockchain. At the
@@ -55,7 +55,7 @@ moment, the attestation object is a JS object conforming to the
 but we'd like to add a helper method to make it easier to construct
 this object.
 
-`vote(attestationId)`
+`TAP.vote(attestationId)`
 
 Coming soon...this is how you would vote on an attestation.
 
