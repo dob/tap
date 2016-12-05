@@ -1,16 +1,12 @@
 module.exports = {
   build: {
-    "index.html": "index.html",
-      "attestation.html": "attestation.html",
-      "addAttestation.html": "addAttestation.html",
     "app.js": [
       "javascripts/app.js"
     ],
-      "add.js":"javascripts/add.js",
+      "tap.js":"javascripts/tap.js",
       "ipfs.js":"javascripts/ipfs.js",
-      "app.css": [
-      "stylesheets/app.css"
-    ],
+      "browser-solc.min.js":"javascripts/browser-solc.min.js",
+      "index.html":"index.html",
     "images/": "images/"
   },
   rpc: {
