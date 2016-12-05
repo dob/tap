@@ -9,9 +9,13 @@
     <script src="https://unpkg.com/ipfs-api/dist/index.js"></script>
     <script src="./app.js"></script>
     <script src="./verify.js"></script>
+    <script src="./browser-solc.min.js"></script>
 </head>
 <body>
     <div id="compileError" style="color:red; display:none"></div>
+    <div>
+        <select id="versions"></select>
+    </div>
     <div style="margin:10px">
         <label for="contractAddress">Address:</label><br>
         <input type="text" id="contractAddress" style="width:500px"></input>
