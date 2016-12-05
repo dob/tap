@@ -407,3 +407,11 @@ img::-moz-selection {
 body {
   webkit-tap-highlight-color: #222222;
 }
+
+.footer-description p{
+  width:800px;
+  font-size:25px;
+  font-weight: 200;
+  text-align: center;
+  margin-left: 175px;
+}
