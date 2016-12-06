@@ -1,0 +1,12 @@
+{  
+   "bytecode":"6060604052346000575b602b8060156000396000f3606060405260e060020a6000350463e2179b8e8114601c575b6000565b3460005760266028565b005b5b56",
+   "runtimeBytecode":"606060405260e060020a6000350463e2179b8e8114601c575b6000565b3460005760266028565b005b5b56",
+   "abi":"[{\"constant\":false,\"inputs\":[],\"name\":\"g\",\"outputs\":[],\"payable\":false,\"type\":\"function\"}]",
+   "sourceCode":"contract x { function g() {} }",
+   "metadata":{  
+      "name":"x",
+      "functionHashes":{  
+         "g()":"e2179b8e"
+      }
+   }
+}
